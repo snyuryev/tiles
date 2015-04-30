@@ -1,0 +1,109 @@
+<html>
+<head>
+	<title>Tiles</title>
+</head>
+<body>
+
+<script type="application/javascript">
+
+	var viewPhysicalWidth = 250 + Math.round(Math.random() * 750),  // Hardcoded
+		viewPhysicalHeight = 250 + Math.round(Math.random() * 750), // Hardcoded
+		tilePhysicalSize = 50;                                      // Hardcoded
+
+	var meshWidth = Math.round(viewPhysicalWidth / tilePhysicalSize),
+		meshHeight = Math.round(viewPhysicalHeight / tilePhysicalSize);
+
+	var minDimension = Math.min(meshWidth, meshHeight),
+		maxAreaUnderTile = minDimension > 10 ? 0.25 : 0.4,          // Hardcoded
+		maxTileSize = Math.round(minDimension * maxAreaUnderTile);
+
+	var field = [],
+		tiles = [],
+		x, y;
+
+	for (y = 0; y < meshHeight; y++) {
+		var row = [];
+		for (x = 0; x < meshWidth; x++) {
+			row.push(0);
+		}
+		field.push(row);
+	}
+
+	function getAvailableSizes (x, y) {
+		var curSize, result, i;
+		for (curSize = 1; curSize < maxTileSize; curSize++) {
+			if (y + curSize >= meshHeight || x + curSize >= meshWidth) {
+				return curSize;
+			}
+			result = false;
+			for (i = 0; i < curSize; i++) {
+				result = result || x + i >= meshWidth || field[y + curSize][x + i];
+			}
+			for (i = 0; i < curSize; i++) {
+				result = result || y + i >= meshHeight || field[y + i][x + curSize];
+			}
+			if (result) {
+				return curSize; // actually, curSize + 1 - 1
+								// +1 because we start from 0,
+								// -1 because we return previous curSize
+			}
+		}
+		return maxTileSize;
+	}
+
+	function fillSquare (x, y, size) {
+		for (var i = 0; i < size; i++) {
+			for (var j = 0; j < size; j++) {
+				// size value here can be used for making tiles around more random
+				field[y + j][x + i] = size;
+			}
+		}
+	}
+
+	function intRandom (max) {
+		return Math.round(Math.random() * max + 0.5) - 1;
+	}
+
+	for (y = 0; y < meshHeight; y++) {
+		// It gives more random effect to zero oldSize here, because else we get rows with similar begin very often
+		var oldSize = 0;
+		for (x = 0; x < meshWidth; x++) {
+			if (!field[y][x]) {
+				var maxAvailableSize = getAvailableSizes(x, y),
+					currentSize = intRandom(maxAvailableSize) + 1;
+
+				// Some randomization of tiles' sizes
+				if (maxAvailableSize > 1 && oldSize === currentSize && (Math.random() < 0.5)) {
+					while (currentSize === oldSize) {
+						currentSize = intRandom(maxAvailableSize) + 1;
+					}
+				}
+				oldSize = currentSize;
+
+				fillSquare(x, y, currentSize);
+				tiles.push({
+					x: x,
+					y: y,
+					size: currentSize,
+				});
+			}
+		}
+	}
+
+	for (var i = 0; i < tiles.length; i++) {
+		var tile = tiles[i];
+		// Just to avoid including of jquery
+		var element = document.createElement('div');
+		element.style.position = 'absolute';
+		element.style.top = (20 + tile.y * tilePhysicalSize) + 'px';
+		element.style.left = (20 + tile.x * tilePhysicalSize) + 'px';
+		element.style.width = (tilePhysicalSize * tile.size - 1) + 'px';
+		element.style.height = (tilePhysicalSize * tile.size - 1) + 'px';
+		element.style.backgroundColor = 'rgb(' + intRandom(256) + ',' + intRandom(256) + ',' + intRandom(256) + ')';
+		document.body.appendChild(element);
+	}
+
+</script>
+
+</body>
+</html>
