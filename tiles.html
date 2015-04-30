@@ -6,15 +6,15 @@
 
 <script type="application/javascript">
 
-	var viewPhysicalWidth = 250 + Math.round(Math.random() * 750),  // Hardcoded
-		viewPhysicalHeight = 250 + Math.round(Math.random() * 750), // Hardcoded
-		tilePhysicalSize = 50;                                      // Hardcoded
+	var viewPhysicalWidth = 250 + Math.round(Math.random() * 750),
+		viewPhysicalHeight = 250 + Math.round(Math.random() * 750),
+		tilePhysicalSize = 50;
 
 	var meshWidth = Math.round(viewPhysicalWidth / tilePhysicalSize),
 		meshHeight = Math.round(viewPhysicalHeight / tilePhysicalSize);
 
 	var minDimension = Math.min(meshWidth, meshHeight),
-		maxAreaUnderTile = minDimension > 10 ? 0.25 : 0.4,          // Hardcoded
+		maxAreaUnderTile = minDimension > 10 ? 0.25 : 0.4, // Hardcoded filling percents
 		maxTileSize = Math.round(minDimension * maxAreaUnderTile);
 
 	var field = [],
@@ -44,8 +44,8 @@
 			}
 			if (result) {
 				return curSize; // actually, curSize + 1 - 1
-								// +1 because we start from 0,
-								// -1 because we return previous curSize
+				                // +1 because we start from 0,
+				                // -1 because we return previous curSize
 			}
 		}
 		return maxTileSize;
@@ -54,7 +54,7 @@
 	function fillSquare (x, y, size) {
 		for (var i = 0; i < size; i++) {
 			for (var j = 0; j < size; j++) {
-				// size value here can be used for making tiles around more random
+				// size value here can be used for making tiles around more random (it isn't used in this code)
 				field[y + j][x + i] = size;
 			}
 		}
